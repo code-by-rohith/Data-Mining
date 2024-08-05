@@ -1,19 +1,27 @@
-import csv
-import random
+import pandas as pd
 
-def generate_random_data(num_points, num_features):
-    return [[random.uniform(0, 10) for _ in range(num_features)] for _ in range(num_points)]
+file_path = "diabetes.csv"
+df = pd.read_csv(file_path)
 
-def save_data_to_csv(file_path, data):
-    with open(file_path, 'w', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow([f'Feature{i+1}' for i in range(len(data[0]))])
-        writer.writerows(data)
+print("Initial data:")
+print(df.head())
 
-if __name__ == "__main__":
-    num_points = 100
-    num_features = 2
-    file_path = 'kmeansdataset.csv'
-    data = generate_random_data(num_points, num_features)
-    save_data_to_csv(file_path, data)
-    print(f"Generated dataset with {num_points} points and {num_features} features saved to {file_path}.")
+print("\nDuplicate rows before cleaning:")
+duplicates = df[df.duplicated()]
+print(duplicates)
+
+print("\nNumber of duplicate rows before cleaning:")
+print(df.duplicated().sum())
+
+df.drop_duplicates(inplace=True)
+
+print("\nNumber of duplicate rows after cleaning:")
+print(df.duplicated().sum())
+
+df['Outcome'] = df['Outcome'].astype('category')
+
+print("\nCleaned data:")
+print(df.head())
+
+df.to_csv("cleaned_diabetes.csv", index=False)
+print("\nCleaned dataset saved to 'cleaned_diabetes.csv'.")
